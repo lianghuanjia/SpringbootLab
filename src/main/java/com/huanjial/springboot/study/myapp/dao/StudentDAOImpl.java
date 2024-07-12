@@ -2,9 +2,13 @@ package com.huanjial.springboot.study.myapp.dao;
 
 import com.huanjial.springboot.study.myapp.entity.Student;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 // @Repository:
@@ -50,5 +54,57 @@ public class StudentDAOImpl implements StudentDAO{
         entityManager.persist(theStudent);
         // This method is used to insert a new entity (in this case, Student) into the persistence context and eventually into the database.
         //The persist method makes the entity managed and persistent, meaning it will be saved to the database when the transaction is committed.
+    }
+
+    @Override
+//    @Transactional -> We don't need @Transactional in this case because this method is read-only operation
+    // For read-only operation, it doesn't modify database and doesn't require a transactional context.
+    public Student findById(Integer id) {
+        return entityManager.find(Student.class, id);
+    }
+
+    @Override
+    public List<Student> findAll() {
+        // create query
+        TypedQuery<Student> theQuery = entityManager.createQuery("SELECT s FROM Student s", Student.class);
+
+        return theQuery.getResultList();
+    }
+
+    @Override
+    public List<Student> findAllWithSortedLastName() {
+        TypedQuery<Student> sortLastNameQuery = entityManager.createQuery("SELECT s FROM Student s ORDER BY s.lastName desc ", Student.class);
+        return sortLastNameQuery.getResultList();
+    }
+
+    @Override
+    public List<Student> findByLastName(String lastName) {
+        // For the below line, we use TypedQuery when we expect the query to return a result set of specific type.
+        // It's used for 'SELECT' operations
+        TypedQuery<Student> studentWithMatchLastNameQuery =
+                entityManager.createQuery("SELECT s FROM Student s WHERE s.lastName=:lastNameData", Student.class);
+        studentWithMatchLastNameQuery.setParameter("lastNameData", lastName);
+        return studentWithMatchLastNameQuery.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void update(Student student) {
+        entityManager.merge(student);
+    }
+
+    @Override
+    @Transactional
+    public void delete(int studentId) {
+        Student student = findById(studentId);
+        entityManager.remove(student);
+    }
+
+    @Override
+    @Transactional
+    public int deleteAllStudents() {
+        Query query = entityManager.createQuery("DELETE from Student");
+        int numRowsDeleted = query.executeUpdate();
+        return numRowsDeleted;
     }
 }

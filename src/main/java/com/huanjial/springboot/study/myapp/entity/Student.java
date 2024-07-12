@@ -46,6 +46,10 @@ public class Student {
     // Note: For those getters, setters, toString, are called boilerplate code.
     // We can use lombok dependency to generate them, and this can greatly reduce the code
 
+    public int getId() {
+        return id;
+    }
+
     public String getFirstName() {
         return firstName;
     }
