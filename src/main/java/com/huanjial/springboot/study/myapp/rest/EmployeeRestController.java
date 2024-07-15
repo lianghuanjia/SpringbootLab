@@ -4,11 +4,14 @@ package com.huanjial.springboot.study.myapp.rest;
 import com.huanjial.springboot.study.myapp.dao.EmployeeDAO;
 import com.huanjial.springboot.study.myapp.entity.Employee;
 import com.huanjial.springboot.study.myapp.service.EmployeeService;
+import com.huanjial.springboot.study.myapp.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+
 
 import java.util.List;
 
@@ -44,6 +47,18 @@ public class EmployeeRestController {
     @Transactional
     public Employee addEmployee(@RequestBody Employee employee){
         return employeeService.save(employee);
+    }
+
+    @PutMapping("/employees")
+    @Transactional
+    public Employee updateEmployee(@RequestBody Employee employee){
+        try {
+            Employee updatedEmployee = employeeService.update(employee);
+            EmployeeResponse response = new EmployeeResponse("Updated successfully", updatedEmployee);
+            return ResponseEntity.ok(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeResponse("Failed to update employee", null));
+        };
     }
 
     @ExceptionHandler(Exception.class)

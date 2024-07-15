@@ -45,5 +45,14 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
     }
 
+    @Override
+    public Employee update(Employee employee) {
+        try{
+            return employeeDAO.updateEmployee(employee);
+        }catch (Exception exception){
+            throw exception;
+        }
+    }
+
 
 }

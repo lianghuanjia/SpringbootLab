@@ -47,4 +47,9 @@ public class EmployeeDAOImpl implements EmployeeDAO {
             return entityManager.merge(employee);
         }
     }
+
+    @Override
+    public Employee updateEmployee(Employee employee) {
+        return entityManager.merge(employee);
+    }
 }
