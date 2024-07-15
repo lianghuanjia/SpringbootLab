@@ -1,7 +1,6 @@
 package com.huanjial.springboot.study.myapp.rest;
 
 
-import com.huanjial.springboot.study.myapp.dao.EmployeeDAO;
 import com.huanjial.springboot.study.myapp.entity.Employee;
 import com.huanjial.springboot.study.myapp.service.EmployeeService;
 import com.huanjial.springboot.study.myapp.response.*;
@@ -51,19 +50,22 @@ public class EmployeeRestController {
 
     @PutMapping("/employees")
     @Transactional
-    public Employee updateEmployee(@RequestBody Employee employee){
-        try {
-            Employee updatedEmployee = employeeService.update(employee);
-            EmployeeResponse response = new EmployeeResponse("Updated successfully", updatedEmployee);
-            return ResponseEntity.ok(response, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeResponse("Failed to update employee", null));
-        };
+    public ResponseEntity<EmployeeResponse> updateEmployee(@RequestBody Employee employee){
+        Employee updatedEmployee = employeeService.update(employee);
+        EmployeeResponse response = new EmployeeResponse("Updated successfully", updatedEmployee);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/employees/{employeeId}")
+    @Transactional
+    public ResponseEntity deleteEmployeeById(@PathVariable int employeeId){
+        employeeService.deleteById(employeeId);
+        return (ResponseEntity) ResponseEntity.ok().body("Deleted Successfully");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleEmployeeNotFoundException(Exception ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

@@ -54,5 +54,14 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
     }
 
+    @Override
+    public void deleteById(int employeeId) {
+        try{
+            employeeDAO.deleteEmployeeById(employeeId);
+        }catch (Exception exception){
+            throw exception;
+        }
+    }
+
 
 }
