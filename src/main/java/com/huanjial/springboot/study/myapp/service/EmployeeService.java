@@ -1,14 +1,14 @@
-package com.huanjial.springboot.study.myapp.dao;
+package com.huanjial.springboot.study.myapp.service;
 
 import com.huanjial.springboot.study.myapp.entity.Employee;
 
 import java.util.List;
 
-public interface EmployeeDAO {
+public interface EmployeeService {
 
     List<Employee> findAll();
 
     Employee getEmployeeById(int id);
 
-    Employee saveEmployee(Employee employee);
+    Employee save(Employee employee);
 }

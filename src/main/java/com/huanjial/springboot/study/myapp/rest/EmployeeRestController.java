@@ -3,10 +3,12 @@ package com.huanjial.springboot.study.myapp.rest;
 
 import com.huanjial.springboot.study.myapp.dao.EmployeeDAO;
 import com.huanjial.springboot.study.myapp.entity.Employee;
+import com.huanjial.springboot.study.myapp.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,18 +16,39 @@ import java.util.List;
 @RequestMapping("/api")
 public class EmployeeRestController {
 
-    private EmployeeDAO employeeDAO;
+    private EmployeeService employeeService;
 
     public EmployeeRestController() {
     }
 
-    public EmployeeRestController(EmployeeDAO employeeDAO) {
-        this.employeeDAO = employeeDAO;
+    @Autowired
+    public EmployeeRestController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/employees")
     List<Employee> getAllEmployees(){
-        List<Employee> employeeList = employeeDAO.findAll();
+        List<Employee> employeeList = employeeService.findAll();
         return employeeList;
     }
+
+    @GetMapping("/employees/{employeeId}")
+    Employee getEmployeeById(@PathVariable int employeeId){
+        Employee employee = employeeService.getEmployeeById(employeeId);
+        return employee;
+
+    }
+
+
+    @PostMapping("/employees")
+    @Transactional
+    public Employee addEmployee(@RequestBody Employee employee){
+        return employeeService.save(employee);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleEmployeeNotFoundException(Exception ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }
