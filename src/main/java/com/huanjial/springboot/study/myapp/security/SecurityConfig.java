@@ -15,6 +15,7 @@ import javax.xml.crypto.Data;
 @Configuration
 public class SecurityConfig {
 
+    // Use JdbcUserDetailsManager to create a UserDetailsManager by using MySQL Database
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource){
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
@@ -28,7 +29,7 @@ public class SecurityConfig {
 
 
 
-
+    // Use HeepSecurity to define SecurityFilterChain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(configurer ->
